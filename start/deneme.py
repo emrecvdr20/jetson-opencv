@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+#calismalar bu dosyada
+
 def orta_nokta_ciz(frame):
     yukseklik, genislik, _ = frame.shape
     orta_nokta = (genislik // 2, yukseklik // 2)
