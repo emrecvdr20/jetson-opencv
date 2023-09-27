@@ -30,11 +30,13 @@ video_cap = cv2.VideoCapture('./videos/video.mp4')
 
 def siyah_rengi_bul(frame):
     lower_siyah = np.array([0, 0, 0])
-    upper_siyah = np.array([30, 30, 100])
+    upper_siyah = np.array([30, 30, 50])
 
     mask = cv2.inRange(frame, lower_siyah, upper_siyah)
     return mask
 
+
+dosya = open("veriler.txt", "w")
 
 while video_cap.isOpened():
     ret, frame = video_cap.read()
@@ -57,12 +59,19 @@ while video_cap.isOpened():
         
         # Yeşil noktadan siyah çizgiye çizgi çek
         frame = cv2.line(frame, orta_nokta, (orta_x, orta_y), (0, 0, 255), 2)
+        
+        # Verileri dosyaya yaz
+        dosya.write(f"Ortadaki siyah çizgi {kayma[0]} piksel kaydı.\n")
+        dosya.write(f"Verilen koordinattan yapılan kayma: {np.sqrt((orta_nokta[0] - orta_x)**2 + (orta_nokta[1] - orta_y)**2)} piksel\n")
     else:
         print("Siyah çizgi bulunamadı.")
 
     cv2.imshow('Video', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+# Dosyayı kapat
+dosya.close()
 
 video_cap.release()
 cv2.destroyAllWindows()
