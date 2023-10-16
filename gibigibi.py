@@ -27,8 +27,6 @@ def detect_red_in_center(video_path):
 
         mask = cv2.bitwise_or(mask1, mask2)
 
-        result = cv2.bitwise_and(frame, frame, mask=mask)
-
         height, width, _ = frame.shape
         center_x = int(width / 2)
         center_y = int(height / 2)
@@ -44,7 +42,7 @@ def detect_red_in_center(video_path):
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
         cv2.imshow("Frame", frame)
-        cv2.waitKey(100)
+        cv2.waitKey(0)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -54,3 +52,4 @@ def detect_red_in_center(video_path):
 
 video_path = "videos/AVI28.avi"
 detect_red_in_center(video_path)
+ 

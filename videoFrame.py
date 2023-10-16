@@ -1,6 +1,6 @@
 import cv2
 
-cap = cv2.VideoCapture("videos/AVI8.avi")
+cap = cv2.VideoCapture("videos/AVI28.avi")
 frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 print(frame_count)
 for i in range(frame_count):
