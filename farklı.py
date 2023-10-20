@@ -1,29 +1,23 @@
-from PIL import Image
+import cv2
 
-def sarı_nokta_ekle(resim_yolu):
-    # Resmi aç
-    im = Image.open(resim_yolu)
+cv2.namedWindow('Aranan Renk', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Aranan Renk', 800, 600)
 
-    # Resmin boyutlarını al
-    genişlik, yükseklik = im.size
+resim = cv2.imread('images/JPG15.jpg')
 
-    # Orta noktayı belirle
-    orta_nokta = (genişlik // 2, yükseklik // 2)
+orta_nokta_x = resim.shape[1] // 2
+orta_nokta_y = resim.shape[0] // 2
 
-    # Y ekseninin 1512'den başlayacağına göre bu noktayı ayarla
-    orta_nokta = (orta_nokta[0], 1512)
+(h, w) = resim.shape[:2]
 
-    for x in range(genişlik):
-        for y in range(orta_nokta[1], yükseklik):
-            # Belirtilen pikselin rengini al
-            renk = im.getpixel((x, y))
+orta_nokta = (w//2, h//2)
+cv2.line(resim, (0, orta_nokta_y), (resim.shape[1], orta_nokta_y), (255, 255, 0), 10)
+cv2.circle(resim, orta_nokta,30,(), 15)
 
-            # Eğer kırmızı aralıkta ise, sarı renk ile değiştir
-            if renk[0] > 150 and renk[1] < 100 and renk[2] < 100:
-                im.putpixel((x, y), (255, 255, 0))
+aranan_renk = resim[orta_nokta_y, orta_nokta_x]
 
-    # Sonuç resmi kaydet
-    im.save('yeni_resim.png')
+print("Orta yatay çizgideki renk:", aranan_renk)
 
-# Fonksiyonu çağır
-sarı_nokta_ekle('images/JPG8.jpg')
+cv2.imshow('Aranan Renk', resim)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
