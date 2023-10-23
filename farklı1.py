@@ -1,28 +1,42 @@
 import cv2
 import numpy as np
 
-image = cv2.imread('images/JPG15.jpg')
+video = cv2.VideoCapture('videos/AVI11.avi')  
 
-lower_blue = np.array([170, 50, 50])
-upper_blue = np.array([180, 255, 255])
+frame_width = int(video.get(3))
+frame_height = int(video.get(4))
+center_x = frame_width // 2
+center_y = frame_height // 2
 
-hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+while True:
+    ret, frame = video.read()
 
-mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    if not ret:
+        break
 
-blue_objects = cv2.bitwise_and(image, image, mask=mask)
+    color_at_center = frame[center_y, center_x]
 
-gray = cv2.cvtColor(blue_objects, cv2.COLOR_BGR2GRAY)
+    blue, green, red = color_at_center
 
-edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+    frame = cv2.circle(frame, (center_x, center_y), 5, (0, 0, 255), -1)
 
-lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=100, minLineLength=100, maxLineGap=10)
+    lower_red = np.array([160, 100, 20])
+    upper_red = np.array([179, 255, 255])
+    red_mask = cv2.inRange(frame, lower_red, upper_red)
 
-if lines is not None:
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-cv2.imshow('Mavi Nesneler ve Çizgiler', image)
-cv2.waitKey(0)
+    edges = cv2.Canny(gray, 500, 600)
+
+    edges_red = cv2.bitwise_and(edges, edges, mask=red_mask)
+
+    cv2.imshow('Kenarlar', edges_red)  
+
+    print(f'Orta Nokta: ({center_x}, {center_y})')
+    print(f'Renk (BGR): ({blue}, {green}, {red})')
+
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        break
+
+video.release()
 cv2.destroyAllWindows()
