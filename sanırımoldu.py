@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture('videos/AVI7.avi')
+cap = cv2.VideoCapture('videos/video2.mp4')
 
 lower_bound = np.array([160, 100, 100]) 
 upper_bound = np.array([180, 255, 255]) 
