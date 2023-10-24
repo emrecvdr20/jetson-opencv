@@ -47,5 +47,5 @@ def detect_red_in_center(video_path):
     cap.release()
     cv2.destroyAllWindows()
 
-video_path = "videos/AVI28.avi"
+video_path = "videos/AVI11.avi"
 detect_red_in_center(video_path)
