@@ -1,15 +1,16 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture('videos/video2.mp4')
+cap = cv2.VideoCapture('videos/AVI17.avi')
 
-lower_bound = np.array([160, 100, 100]) 
-upper_bound = np.array([180, 255, 255]) 
+lower_bound = np.array([0, 70, 50]) 
+upper_bound = np.array([10, 255, 255]) 
 
 pixel_to_cm = 0.027
 
 while(cap.isOpened()):
     ret, frame = cap.read()
+    print(frame)
 
     if ret:
         height, width, _ = frame.shape
@@ -22,7 +23,7 @@ while(cap.isOpened()):
         center_y = height // 2
         center_x = width //2
 
-        rect_width = 350
+        rect_width = width
         rect_height = 20
 
         top_left = (width // 2 - rect_width // 2, height // 2 - rect_height // 2)
@@ -48,7 +49,10 @@ while(cap.isOpened()):
 
         cv2.putText(frame, f'Merkez: ({center_x}, {center_y})', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
 
-        cv2.imshow('Frame', frame)
+        # Görüntüyü Gaussian blurring ile iyileştir
+        blurred_frame = cv2.GaussianBlur(frame, (1, 1), 0)
+
+        cv2.imshow('Frame', blurred_frame)
 
         if cv2.waitKey(0) & 0xFF == ord('q'):
             break
