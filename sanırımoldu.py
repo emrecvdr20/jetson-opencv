@@ -1,31 +1,26 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture('videos/AVI17.avi')
+cap = cv2.VideoCapture('videos/AVI22.avi')
 
-lower_bound = np.array([0, 70, 50]) 
-upper_bound = np.array([10, 255, 255]) 
+lower_bound = np.array([160, 100, 150]) 
+upper_bound = np.array([180, 255, 255]) 
 
 pixel_to_cm = 0.027
 
 while(cap.isOpened()):
     ret, frame = cap.read()
-    print(frame)
 
     if ret:
         height, width, _ = frame.shape
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
         mask = cv2.inRange(hsv_frame, lower_bound, upper_bound)
-
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+        edges = cv2.Canny(frame, 200, 350)
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         center_y = height // 2
-        center_x = width //2
-
-        rect_width = width
+        center_x = width // 2
+        rect_width = 350
         rect_height = 20
-
         top_left = (width // 2 - rect_width // 2, height // 2 - rect_height // 2)
         bottom_right = (width // 2 + rect_width // 2, height // 2 + rect_height // 2)
 
@@ -46,13 +41,8 @@ while(cap.isOpened()):
 
         cv2.line(frame, (0, center_y), (width, center_y), (0, 255, 0), 2)
         cv2.line(frame, (width // 2, 0), (width // 2, height), (0, 255, 0), 2)
-
         cv2.putText(frame, f'Merkez: ({center_x}, {center_y})', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
-
-        # Görüntüyü Gaussian blurring ile iyileştir
-        blurred_frame = cv2.GaussianBlur(frame, (1, 1), 0)
-
-        cv2.imshow('Frame', blurred_frame)
+        cv2.imshow('Frame', frame)
 
         if cv2.waitKey(0) & 0xFF == ord('q'):
             break
