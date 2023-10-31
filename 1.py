@@ -1,32 +1,61 @@
 import cv2
 import numpy as np
+import time
 
-cap = cv2.VideoCapture('videos/AVI25.avi')
+lower_red = np.array([0, 100, 100])
+upper_red = np.array([10, 255, 255])
 
-lower_bound = np.array([0, 89, 98]) 
-upper_bound = np.array([20, 255, 255]) 
+cap = cv2.VideoCapture('videos/AVI22.avi')
 
-while(cap.isOpened()):
+pixel_to_cm = 0.027
+
+start_time = time.time()
+
+while True:
     ret, frame = cap.read()
+    
+    if not ret:
+        break
+    
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(frame, frame, mask=mask)
+    
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if contours:
+        M = cv2.moments(max(contours, key=cv2.contourArea))
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+        
+        center_x = frame.shape[1] // 2
+        center_y = frame.shape[0] // 2
+        
+        sapma_x = cX - center_x
+        sapma_y = cY - center_y
+        
 
-    if ret:
-        height, width, _ = frame.shape
-        hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        distance_cm = ((sapma_x * pixel_to_cm) ** 2 + (sapma_y * pixel_to_cm) ** 2) ** 0.5
+        
+        cv2.line(frame, (center_x, 0), (center_x, frame.shape[0]), (0, 255, 0), 2)
+        cv2.line(frame, (0, center_y), (frame.shape[1], center_y), (0, 255, 0), 2)
+        cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
+        cv2.line(frame, (center_x, center_y), (cX, cY), (255, 0, 0), 2)
+        
+        print(f"Sapma X: {sapma_x}, Sapma Y: {sapma_y}")
+        
+    
+        cv2.putText(frame, f'Mesafe: {distance_cm:.2f} cm', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
-        # Kırmızı renk aralığını bulma
-        mask_red = cv2.inRange(hsv_frame, lower_bound, upper_bound)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    fps = 1 / elapsed_time
+    start_time = end_time
 
-        # Canny kenar tespiti
-        edges = cv2.Canny(frame, 300, 450)
-
-        # Canny kenarlarını tek bir görüntüde gösterme
-        combined = cv2.addWeighted(edges, 0.5, mask_red, 0.5, 0)
-
-        cv2.imshow('Combined', combined)
-
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            break
-    else:
+    cv2.putText(frame, f'FPS: {int(fps)}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    
+    cv2.imshow('Frame', frame)
+    
+    if cv2.waitKey(0) & 0xFF == ord('q'):
         break
 
 cap.release()

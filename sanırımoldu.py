@@ -3,8 +3,8 @@ import numpy as np
 
 cap = cv2.VideoCapture('videos/AVI22.avi')
 
-lower_bound = np.array([160, 100, 150]) 
-upper_bound = np.array([180, 255, 255]) 
+lower_bound = np.array([0, 100, 100]) 
+upper_bound = np.array([10, 255, 255]) 
 
 pixel_to_cm = 0.027
 
@@ -18,6 +18,7 @@ while(cap.isOpened()):
         edges = cv2.Canny(frame, 200, 350)
         contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         center_y = height // 2
+        print(contours)
         center_x = width // 2
         rect_width = 350
         rect_height = 20
