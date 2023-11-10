@@ -7,7 +7,7 @@ upper_red = np.array([10, 255, 255])
 
 cap = cv2.VideoCapture('videos/AVI22.avi')
 
-pixel_to_cm = 0.027
+pixelCm = 0.027
 
 start_time = time.time()
 
@@ -34,7 +34,7 @@ while True:
         sapma_y = cY - center_y
         
 
-        distance_cm = ((sapma_x * pixel_to_cm) ** 2 + (sapma_y * pixel_to_cm) ** 2) ** 0.5
+        distance_cm = ((sapma_x * pixelCm) ** 2 + (sapma_y * pixelCm) ** 2) ** 0.5
         
         cv2.line(frame, (center_x, 0), (center_x, frame.shape[0]), (0, 255, 0), 2)
         cv2.line(frame, (0, center_y), (frame.shape[1], center_y), (0, 255, 0), 2)
