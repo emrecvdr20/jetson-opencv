@@ -5,7 +5,7 @@ import time
 lower_red = np.array([0, 100, 100])
 upper_red = np.array([10, 255, 255])
 
-cap = cv2.VideoCapture('videos/AVI22.avi')
+cap = cv2.VideoCapture('videos/AVI17.avi')
 
 pixelCm = 0.027
 
